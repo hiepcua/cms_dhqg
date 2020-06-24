@@ -43,7 +43,7 @@ if(isset($_POST['txt_name']) && $_POST['txt_name'] !== '') {
 	$arr['status'] = $Status;
 	$arr['cdate'] = time();
 
-	$result = SysAdd('tbl_vods', $arr);
+	$result = SysAdd('tbl_content', $arr);
 	if($result) $_SESSION['flash'.'com_'.COMS] = 1;
 	else $_SESSION['flash'.'com_'.COMS] = 0;
 }
@@ -66,7 +66,7 @@ $_per_tbt = array(
 $__action = $_per_tbt;
 ?>
 <style type="text/css">
-	#type_text, #type_audio{
+	#type_video, #type_audio{
 		display: none;
 	}
 </style>
@@ -75,13 +75,13 @@ $__action = $_per_tbt;
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">Thêm mới VOD</h1>
+				<h1 class="m-0 text-dark">Thêm mới bài viết</h1>
 			</div><!-- /.col -->
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>">Bảng điều khiển</a></li>
-					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>vod">Danh sách VOD</a></li>
-					<li class="breadcrumb-item active">Thêm mới VOD</li>
+					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>vod">Danh sách bài viết</a></li>
+					<li class="breadcrumb-item active">Thêm mới bài viết</li>
 				</ol>
 			</div><!-- /.col -->
 		</div><!-- /.row -->
@@ -234,7 +234,7 @@ $__action = $_per_tbt;
 							</div>
 
 							<div class="form-group">
-								<label>Album<font color="red"><font color="red">*</font></font></label>
+								<label>Album</label>
 								<select class="form-control" name="cbo_album" id="cbo_album">
 									<option value="0">-- Chọn một --</option>
 									<option value="1">Album 1</option>
@@ -245,7 +245,7 @@ $__action = $_per_tbt;
 							</div>
 
 							<div class="form-group">
-								<label>Chanel<font color="red"><font color="red">*</font></font></label>
+								<label>Chanel</label>
 								<select class="form-control" name="cbo_chanel" id="cbo_chanel">
 									<option value="0">-- Chọn một --</option>
 									<?php
@@ -261,9 +261,9 @@ $__action = $_per_tbt;
 							<div class="form-group">
 								<label>Type</label>
 								<select class="form-control" name="cbo_type" id="cbo_type" onchange="selectVodType()">
+									<option value="3">Text</option>
 									<option value="1">Video</option>
 									<option value="2">Audio</option>
-									<option value="3">Text</option>
 								</select>
 							</div>
 						</div>
@@ -356,8 +356,8 @@ $__action = $_per_tbt;
 		var flag = true;
 		var title = $('#txt_name').val();
 		var cate = parseInt($('#cbo_cate').val());
-		var album = parseInt($('#cbo_album').val());
-		var chanel = parseInt($('#cbo_chanel').val());
+		// var album = parseInt($('#cbo_album').val());
+		// var chanel = parseInt($('#cbo_chanel').val());
 
 		if(title=='' || cate==0 || album==0 || chanel==0){
 			alert('Các mục đánh dấu * không được để trống');

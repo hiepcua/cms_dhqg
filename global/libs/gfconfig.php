@@ -6,7 +6,7 @@ function isSSL(){
 }
 $REQUEST_PROTOCOL = isSSL()? 'https://' : 'http://';
 // define('ROOTHOST',$REQUEST_PROTOCOL.$_SERVER['HTTP_HOST'].'/');
-define('ROOTHOST','http://localhost/ott-anninh24/');
+define('ROOTHOST','http://localhost/cms_dhqg/');
 define('ROOTHOST_ADMIN',$REQUEST_PROTOCOL.$_SERVER['HTTP_HOST'].'/sys/');
 define('WEBSITE',$REQUEST_PROTOCOL.$_SERVER['HTTP_HOST'].'/');
 define('DOMAIN','ott.ecohub.asia');
@@ -52,8 +52,8 @@ define('SMTP_USER','hoangtucoc321@gmail.com');
 define('SMTP_PASS','nsn2651984');
 define('SMTP_MAIL','hoangtucoc321@gmail.com');
 
-define('SITE_NAME','5G.OTT');
-define('SITE_TITLE','5G.OTT');
+define('SITE_NAME','DHQG');
+define('SITE_TITLE','DHQG');
 define('SITE_DESC','');
 define('SITE_KEY','');
 define('SITE_IMAGE','');

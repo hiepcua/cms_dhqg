@@ -1,7 +1,6 @@
 <?php
 defined('ISHOME') or die("Can't access this page!");
-define('COMS','vod');
-$COM='vod';
+define('COMS','content');
 $viewtype='list';
 
 if(isset($_GET['viewtype'])){
@@ -28,7 +27,7 @@ function getListComboboxCategories($parid=0, $level=0){
 	}
 }
 
-if(is_file(COM_PATH.'com_'.$COM.'/tem/'.$viewtype.'.php'))
+if(is_file(COM_PATH.'com_'.COMS.'/tem/'.$viewtype.'.php'))
 	include_once('tem/'.$viewtype.'.php');	
-unset($viewtype); unset($obj); unset($COM);
+unset($viewtype); unset($obj);
 ?>

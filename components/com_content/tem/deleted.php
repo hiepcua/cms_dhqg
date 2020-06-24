@@ -1,25 +1,24 @@
 <?php
-define('OBJ_PAGE','VOD');
+define('OBJ_PAGE','VOD_DELETE');
 // Init variables
 $user=getInfo('username');
 $isAdmin=getInfo('isadmin');
 if($isAdmin==1){
-	$strWhere="";
+	$strWhere=" AND is_trash=1 ";
 
-	$status = isset($_GET['s']) ? antiData($_GET['s']) : '';
+	$get_s = isset($_GET['s']) ? antiData($_GET['s']) : '';
 	$get_q = isset($_GET['q']) ? antiData($_GET['q']) : '';
 	$get_cate = isset($_GET['cate']) ? (int)antiData($_GET['cate']) : 0;
-	$get_chanel = isset($_GET['chanel']) ? (int)antiData($_GET['chanel']) : 0;
 
 	/*Gán strWhere*/
+	if($get_s!=''){
+		$strWhere.=" AND status =".$get_s;
+	}
 	if($get_q!=''){
 		$strWhere.=" AND title LIKE '%".$get_q."%'";
 	}
 	if($get_cate!=0){
 		$strWhere.=" AND cat_id=".$get_cate;
-	}
-	if($get_chanel!=0){
-		$strWhere.=" AND chanel_id=".$get_chanel;
 	}
 
 	/*Begin pagging*/
@@ -30,7 +29,7 @@ if($isAdmin==1){
 		$_SESSION['CUR_PAGE_'.OBJ_PAGE] = (int)$_POST['txtCurnpage'];
 	}
 
-	$total_rows=SysCount('tbl_vods',$strWhere);
+	$total_rows=SysCount('tbl_content',$strWhere);
 	$max_rows = 20;
 
 	if($_SESSION['CUR_PAGE_'.OBJ_PAGE] > ceil($total_rows/$max_rows)){
@@ -44,12 +43,13 @@ if($isAdmin==1){
 		<div class="container-fluid">
 			<div class="row mb-2">
 				<div class="col-sm-6">
-					<h1 class="m-0 text-dark">Danh sách VOD</h1>
+					<h1 class="m-0 text-dark">Danh sách bài viết đã xóa</h1>
 				</div><!-- /.col -->
 				<div class="col-sm-6">
 					<ol class="breadcrumb float-sm-right">
 						<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>">Bảng điều khiển</a></li>
-						<li class="breadcrumb-item active">Danh sách VOD</li>
+						<li class="breadcrumb-item"><a href="<?php echo ROOTHOST.COMS;?>">Danh sách bài viết</a></li>
+						<li class="breadcrumb-item active">Danh sách bài viết đã xóa</li>
 					</ol>
 				</div><!-- /.col -->
 			</div><!-- /.row -->
@@ -60,7 +60,7 @@ if($isAdmin==1){
 	<section class="content">
 		<div class='container-fluid'>
 			<div class="widget-frm-search">
-				<form id='frm_search' method='get' action=''><br/>
+				<form id='frm_search' method='get' action=''>
 					<input type='hidden' id='txt_status' name='s' value='' />
 					<div class='row'>
 						<div class='col-sm-3'>
@@ -71,7 +71,7 @@ if($isAdmin==1){
 						<div class='col-sm-3'>
 							<div class='form-group'>
 								<select class="form-control" name="cate" id="cbo_cate">
-									<option value="">-- Chọn nhóm --</option>
+									<option  value="">-- Chọn nhóm --</option>
 									<?php getListComboboxCategories(0,0); ?>
 								</select>
 								<script type="text/javascript">
@@ -83,19 +83,18 @@ if($isAdmin==1){
 						</div>
 						<div class='col-sm-3'>
 							<div class='form-group'>
-								<select class="form-control" name="chanel" id="cbo_chanel">
-									<option  value="">-- Chọn kênh --</option>
-									<?php
-									$cbo_channels = SysGetList('tbl_channels', array(), ' AND isactive=1');
-									$c_cbo_channels = count($cbo_channels);
-									for ($i=0; $i < $c_cbo_channels; $i++) { 
-										echo '<option value="'.$cbo_channels[$i]['id'].'">'.$cbo_channels[$i]['title'].'</option>';
-									}
-									?>
+								<select class="form-control" name="s" id="cbo_status">
+									<option value="">-- Status --</option>
+									<option value="0">Đang biên tập</option>
+									<option value="1">Chờ duyệt</option>
+									<option value="2">Trả về</option>
+									<option value="3">Chờ xuất bản</option>
+									<option value="4">Đã xuất bản</option>
+									<option value="5">Bị gỡ xuống</option>
 								</select>
 								<script type="text/javascript">
 									$(document).ready(function(){
-										cbo_Selected('cbo_chanel', <?php echo $get_chanel; ?>);
+										cbo_Selected('cbo_status', <?php echo $get_s;?>);
 									});
 								</script>
 							</div>
@@ -116,16 +115,15 @@ if($isAdmin==1){
 								<th>Kênh</th>
 								<th>Type</th>
 								<th>Ngày tạo</th>
-								<th>Status</th>
-								<th>Chi tiết</th>
+								<th class="text-center">Chi tiết</th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php
 							if($total_rows>0){
 								$star = ($cur_page - 1) * $max_rows;
-								$strWhere.=" ORDER BY cdate DESC LIMIT $star,".$max_rows;
-								$obj=SysGetList('tbl_vods',array(), $strWhere, false);
+								$strWhere.=" LIMIT $star,".$max_rows;
+								$obj=SysGetList('tbl_content',array(), $strWhere, false);
 								$stt=0;
 								while($r=$obj->Fetch_Assoc()){
 									$stt++;
@@ -160,8 +158,7 @@ if($isAdmin==1){
 										<td><?php echo $chanel_title;?></td>
 										<td><?php echo $type;?></td>
 										<td><?php echo date('d-m-Y H:i A', $r['cdate']);?></td>
-										<td><?php echo $r['status'];?></td>
-										<td><a href="<?php echo ROOTHOST.'vod/edit/'.$r['id'];?>"><i class="fas fa-edit cblue"></i></a></td>
+										<td class="text-center"><a href="<?php echo ROOTHOST.COMS.'/edit/'.$r['id'];?>"><i class="fas fa-edit cblue"></i></a></td>
 									</tr>
 								<?php }
 							}else{

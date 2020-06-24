@@ -47,13 +47,13 @@ if(isset($_POST['txt_name']) && $_POST['txt_name']!=='') {
 	$arr['mdate'] = time();
 	$arr['status'] = $Status;
 
-	$result = SysEdit('tbl_vods', $arr, " id=".$GetID);
+	$result = SysEdit('tbl_content', $arr, " id=".$GetID);
 
 	if($result) $_SESSION['flash'.'com_'.COMS] = 1;
 	else $_SESSION['flash'.'com_'.COMS] = 0;
 }
 
-$res_Vods = SysGetList('tbl_vods', array(), ' AND id='. $GetID);
+$res_Vods = SysGetList('tbl_content', array(), ' AND id='. $GetID);
 if(count($res_Vods) <= 0){
 	echo 'Không có dữ liệu.'; 
 	return;
@@ -189,7 +189,7 @@ if(count($audio_sourses) > 0){
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>">Bảng điều khiển</a></li>
-					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>vod">Danh sách VOD</a></li>
+					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>vod">Danh sách bài viết</a></li>
 					<li class="breadcrumb-item active"><?php echo $__page_title; ?></li>
 				</ol>
 			</div><!-- /.col -->
