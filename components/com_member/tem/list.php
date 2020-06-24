@@ -37,21 +37,6 @@ if($isAdmin==1){
 	$cur_page=(int)$_SESSION['CUR_PAGE_'.OBJ_PAGE]>0 ? $_SESSION['CUR_PAGE_'.OBJ_PAGE] : 1;
 	// End pagging
 	?>
-	<script type="text/javascript">
-		$(document).ready(function(){
-			$('#cbo_action').change(function(){
-				$('#frm_list').submit();
-			});
-		});
-
-		function cbo_Selected(id, value){
-			var obj=document.getElementById(id);
-			for(i=0;i<obj.length;i++){
-				if(obj[i].value==value)
-					obj.selectedIndex=i;
-			}
-		}
-	</script>
 	<!-- Content Header (Page header) -->
 	<div class="content-header">
 		<div class="container-fluid">
@@ -74,7 +59,7 @@ if($isAdmin==1){
 		<div class='container-fluid'>
 			<div class="widget-frm-search">
 				<form id='frm_search' method='get' action=''>
-					<input type='hidden' id='txtids' name='txtids'/>
+					<input type='hidden' id='txtids'/>
 					<input type='hidden' id='txt_status' name='s' value='<?php echo $status;?>' />
 					<div class='row'>
 						<div class='col-sm-4'>
@@ -82,98 +67,138 @@ if($isAdmin==1){
 								<input type='text' id='txt_title' name='q' class='form-control' value='<?php echo $q;?>' placeholder="Tên, email hoặc số điện thoại" />
 							</div>
 						</div>
-						<div class='col-sm-2'></div>
-						<div class="col-sm-2"></div>
+						<div class="col-sm-2"><input type="submit" name="" class="btn btn-primary" value="Tìm kiếm"></div>
+						<div class='col-sm-2'>
+							<select class="form-control" name="cbo_action" id="cbo_action">
+								<option value="0">-- Hành động --</option>
+								<option value="delete">Xóa</option>
+								<option value="public">Hiển thị</option>
+								<option value="unpublic">Ẩn</option>
+							</select>
+						</div>
 						<div class="col-sm-4 text-right">
 							<div class='form-group'>
 								<?php if($status=='trash'){?>
 									<button type='button' class='btn btn-default' id='btn_list_member' ><i class="fas fa-list"></i> Danh sách </button>
 								<?php }else{?>
-									<button type='button' class='btn btn-default' id='btn_list_trash_member' ><i class="fas fa-trash"></i> Trash</button>
-								<?php }?>&nbsp&nbsp
-								<a href="<?php echo ROOTHOST.COMS;?>/add" class="btn btn-primary float-sm-right">Thêm mới</a>
+									<button type='button' class='btn btn-default' id='btn_list_trash_member' ><i class="fas fa-trash"></i>Ds trash</button>
+									<?php }?>&nbsp&nbsp
+									<a href="<?php echo ROOTHOST.COMS;?>/add" class="btn btn-primary float-sm-right">Thêm mới</a>
+								</div>
 							</div>
 						</div>
-					</div>
-				</form>
-				<script type="text/javascript">
-					$('#txt_keyword').keyup(function(e){
-						if (e.which == 13) {
-							/*Enter key pressed*/
-							$('#frm_search').submit();
-							e.preventDefault();
-							return false;
-						}
-					});
-					$('#btn_list_trash_member').click(function(){
-						$('#txt_status').val('trash');
-						$('#frm_search').submit();
-					});
-					$('#btn_list_member').click(function(){
-						$('#txt_status').val('');
-						$('#frm_search').submit();
-					});
-				</script>
-			</div>
+					</form>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							$('#txt_keyword').keyup(function(e){
+								if (e.which == 13) {
+									/*Enter key pressed*/
+									$('#frm_search').submit();
+									e.preventDefault();
+									return false;
+								}
+							});
+							$('#btn_list_trash_member').click(function(){
+								$('#txt_status').val('trash');
+								$('#frm_search').submit();
+							});
+							$('#btn_list_member').click(function(){
+								$('#txt_status').val('');
+								$('#frm_search').submit();
+							});
+							$('#cbo_action').change(function(){
+								var ids = $('#txtids').val();
+								var action = $(this).val();
+								if(action == 0) return;
 
-			<div class="card">
-				<div class="table-responsive">
-					<table class="table">
-						<thead>                  
-							<tr>
-								<th style="width: 10px">#</th>
-								<th width="30" align="center"><input type="checkbox" name="chkall" id="chkall" value="" onclick="docheckall('chk',this.checked);" /></th>
-								<th>Xóa</th>
-								<th>Username</th>
-								<th>Fullname</th>
-								<th>Phone</th>
-								<th>Email</th>
-								<th style="text-align: center;">Hiển thị</th>
-								<th style="text-align: center;">Chi tiết</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-							if($total>0){
-								$i=0;
-								$start = ($cur_page - 1) * $max_rows;
-								$strWhere.=" LIMIT $start,".$max_rows;
-								$obj=SysGetList('tbl_member', array(), $strWhere, false);
-								while($r=$obj->Fetch_Assoc()){
-									$i++;
-									if($r['isactive'] == 1) 
-										$icon_active    = "<i class='fas fa-toggle-on cgreen'></i>";
-									else $icon_active   = '<i class="fa fa-toggle-off cgray" aria-hidden="true"></i>';
+								if(ids.length <= 0){
+									alert('Bạn chưa chọn đối tượng nào.');
+								}else{
+									var _data = {
+										'ids': ids,
+										'action': action
+									}
+									if(action == "delete"){
+										if(confirm('Bạn có chắc muốn xóa ?')){
+											$.post("<?php echo ROOTHOST.'ajaxs/mem/cbo_actions.php'?>", _data, function(req){
+												if(req == 1){
+													window.location = "<?php echo ROOTHOST.COMS;?>";
+												}
+											})
+										};
+									}else{
+										$.post("<?php echo ROOTHOST.'ajaxs/mem/trash_multiple.php'?>", _data, function(req){
+											if(req == 1){
+												window.location = "<?php echo ROOTHOST.COMS;?>";
+											}
+										})
+									}
+									
+								}
+								// $('#frm_search').submit();
+							});
+						});
+					</script>
+				</div>
+
+				<div class="card">
+					<div class="table-responsive">
+						<table class="table">
+							<thead>                  
+								<tr>
+									<th style="width: 10px">#</th>
+									<th width="30" align="center"><input type="checkbox" name="chkall" id="chkall" value="" onclick="docheckall('chk',this.checked);" /></th>
+									<th>Trash</th>
+									<th>Username</th>
+									<th>Fullname</th>
+									<th>Phone</th>
+									<th>Email</th>
+									<th style="text-align: center;">Hiển thị</th>
+									<th style="text-align: center;">Chi tiết</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								if($total>0){
+									$i=0;
+									$start = ($cur_page - 1) * $max_rows;
+									$strWhere.=" LIMIT $start,".$max_rows;
+									$obj=SysGetList('tbl_member', array(), $strWhere, false);
+									while($r=$obj->Fetch_Assoc()){
+										$i++;
+										if($r['isactive'] == 1) 
+											$icon_active    = "<i class='fas fa-toggle-on cgreen'></i>";
+										else $icon_active   = '<i class="fa fa-toggle-off cgray" aria-hidden="true"></i>';
+										?>
+										<tr>
+											<td width='30' align='center'><?php echo $i;?></td>
+											<td width='30' align='center'><input type='checkbox' name='chk' onclick="docheckonce('chk');" value="<?php echo $r['id'];?>"></td>
+											<td align="center" width="10"><a href="<?php echo ROOTHOST.COMS."/trash/".$r['id'];?>" onclick='return confirm("Bạn có chắc muốn xóa ?")'><i class='fa fa-trash cred' aria-hidden='true'></i></a></td>
+											<td><?php echo $r['username'];?></td>
+											<td><?php echo $r['fullname'];?></td>
+											<td><?php echo $r['phone'];?></td>
+											<td><?php echo $r['email'];?></td>
+											<td align='center'><a href="<?php echo ROOTHOST.COMS."/active/".$r['id'];?>"><?php echo $icon_active;?></a></td>
+											<td align='center'>
+												<a href="<?php echo ROOTHOST.COMS."/edit/".$r['id'];?>"><i class="fas fa-edit"></i></a>
+											</td>
+										</tr>
+									<?php }
+								}else{
 									?>
 									<tr>
-										<td width='30' align='center'><?php echo $i;?></td>
-										<td width='30' align='center'><input type='checkbox' name='chk' onclick="docheckonce('chk');" value=""></td>
-										<td align="center" width="10"><a href="<?php echo ROOTHOST.COMS."/trash/".$r['id'];?>" onclick='return confirm("Bạn có chắc muốn xóa ?")'><i class='fa fa-trash cred' aria-hidden='true'></i></a></td>
-										<td><?php echo $r['username'];?></td>
-										<td><?php echo $r['fullname'];?></td>
-										<td><?php echo $r['phone'];?></td>
-										<td><?php echo $r['email'];?></td>
-										<td align='center'><a href="<?php echo ROOTHOST.COMS."/active/".$r['id'];?>"><?php echo $icon_active;?></a></td>
-										<td align='center'>
-											<a href="<?php echo ROOTHOST.COMS."/edit/".$r['id'];?>"><i class="fas fa-edit"></i></a>
-										</td>
+										<td colspan='3' class='text-center'>No there member yet!</td>
 									</tr>
-								<?php }
-							}else{
-								?>
-								<tr>
-									<td colspan='3' class='text-center'>No there member yet!</td>
-								</tr>
-							<?php }?>
-						</tbody>
-					</table>
+								<?php }?>
+							</tbody>
+						</table>
+					</div>
 				</div>
+				<nav class="d-flex justify-content-center">
+					<?php paging($total_rows, $max_rows, $cur_page);?>
+				</nav>
 			</div>
-			<nav class="d-flex justify-content-center">
-				<?php paging($total_rows, $max_rows, $cur_page);?>
-			</nav>
-		</div>
-	</section>
-<?php }else{
-	echo "<h3 class='text-center'>You haven't permission</h3>";
-}?>
+		</section>
+	<?php }else{
+		echo "<h3 class='text-center'>You haven't permission</h3>";
+	}?>

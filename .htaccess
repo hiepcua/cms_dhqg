@@ -40,6 +40,7 @@ RewriteRule ^member/?$ 					index.php?com=member [QSA]
 RewriteRule ^member/add/?$ 				index.php?com=member&viewtype=add [QSA]
 RewriteRule ^member/edit/([0-9]+)?$ 	index.php?com=member&viewtype=edit&id=$1 [QSA]
 RewriteRule ^member/active/([0-9]+)?$ 	index.php?com=member&viewtype=active&id=$1 [QSA]
+RewriteRule ^member/changepass/([0-9]+)?$ 	index.php?com=member&viewtype=changepass&id=$1 [QSA]
 
 RewriteRule ^channel/?$ 					index.php?com=channel [QSA]
 RewriteRule ^channel/add/?$ 				index.php?com=channel&viewtype=add [QSA]

@@ -1,34 +1,28 @@
 <?php
-$user=getInfo('username');
 $isAdmin=getInfo('isadmin');
-$sql="SELECT * FROM tbl_member WHERE username='".$user."'";
-$objmysql = new CLS_MYSQL;
-$objmysql->Query($sql);
-$row = $objmysql->Fetch_Assoc();
-$avatar = getAvatar($row['avatar'], 'avatar mg-thumbnail', '');
+$GetID = isset($_GET['id']) ? (int)$_GET["id"] : 0;
+if($GetID == 0){ echo "Không có dữ liệu."; return; }
+
+$res_Member = SysGetList('tbl_member', array(), "AND id=".$GetID);
+if(count($res_Member) <= 0){ echo 'Không có dữ liệu.'; return; }
+$row = $res_Member[0];
 
 if(isset($_POST['cmdsave_tab2'])){
 	$Cur_password 	= isset($_POST['current_password']) ? trim(addslashes($_POST['current_password'])) : '';
 	$New_password 	= isset($_POST['new_password']) ? trim(addslashes($_POST['new_password'])) : '';
 	$Re_password 	= isset($_POST['re_password']) ? trim(addslashes($_POST['re_password'])) : '';
+	$pass = antiData($Cur_password);
+	$pass = hash('sha256', $row['username']).'|'.hash('sha256', md5($pass));
 
-	$pass 			= antiData($Cur_password);
-	$pass 			= md5($pass);
-	$pass 			= hash('sha256', $user).'|'.hash('sha256', $pass);
+	if($pass == $row['password']){
+		$arr = array();
+		$arr['password'] = hash('sha256',$row['username']).'|'.hash('sha256',md5($New_password));
+		$result = SysEdit('tbl_member', $arr, "id=".$GetID);
 
-	$sql="SELECT `password` FROM tbl_member WHERE username ='".$user."'";
-	$objmysql = new CLS_MYSQL;
-	$objmysql->Query($sql);
-	$r_user = $objmysql->Fetch_Assoc();
-
-	if($pass == $r_user['password']){
-		$newPass = hash('sha256',$user).'|'.hash('sha256',md5($New_password));
-		$sql="UPDATE `tbl_member` SET `password`='".$newPass."' WHERE `username`='".$user."'";
-		$result = $objmysql->Query($sql);
-		if($result) $_SESSION['flash'.'com_'.$COM] = 1;
-        else $_SESSION['flash'.'com_'.$COM] = 0;
+		if($result) $_SESSION['flash'.'com_'.COMS] = 1;
+        else $_SESSION['flash'.'com_'.COMS] = 0;
 	}else{
-		$_SESSION['flash'.'com_'.$COM] = 0;
+		$_SESSION['flash'.'com_'.COMS] = 3;
 	}
 }
 ?>
@@ -46,12 +40,13 @@ if(isset($_POST['cmdsave_tab2'])){
 	<div class="container-fluid">
 		<div class="row mb-2">
 			<div class="col-sm-6">
-				<h1 class="m-0 text-dark">CHANGE PASSWORD</h1>
+				<h1 class="m-0 text-dark">Đổi mật khẩu</h1>
 			</div><!-- /.col -->
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>">Home</a></li>
-					<li class="breadcrumb-item active">Change password</li>
+					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST.COMS;?>">Members</a></li>
+					<li class="breadcrumb-item active">Đổi mật khẩu</li>
 				</ol>
 			</div><!-- /.col -->
 		</div><!-- /.row -->
@@ -66,14 +61,14 @@ if(isset($_POST['cmdsave_tab2'])){
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-sm-4 col-lg-3">
-						<div class="text-center">
+						<!-- <div class="text-center">
 							<div class="wrap-avatar">
 								<?php echo $avatar;?>
 							</div>
-						</div>
+						</div> -->
 
 						<ul class="list-group">
-							<li class="list-group-item"><strong>Username:</strong> <div><?php echo $row['username'];?></div></li>
+							<li class="list-group-item"><strong>Tên đăng nhập:</strong> <div><?php echo $row['username'];?></div></li>
 							<li class="list-group-item"><span class="pull-left"><strong>Join:</strong></span> <?php echo date('d-m-Y', $row['cdate']);?></li>
 						</ul>
 					</div>
@@ -84,15 +79,18 @@ if(isset($_POST['cmdsave_tab2'])){
 								<form id="frm_action" class="form" action="" method="post">
 									<p>
 										<?php
-										if (isset($_SESSION['flash'.'com_'.$COM])) {
-											if($_SESSION['flash'.'com_'.$COM] == 1){
+										if (isset($_SESSION['flash'.'com_'.COMS])) {
+											if($_SESSION['flash'.'com_'.COMS] == 1){
 												$msg->success('Cập nhật thành công.');
 												echo $msg->display();
-											}else if($_SESSION['flash'.'com_'.$COM] == 0){
+											}else if($_SESSION['flash'.'com_'.COMS] == 0){
 												$msg->error('Có lỗi trong quá trình cập nhật.');
 												echo $msg->display();
+											}else if($_SESSION['flash'.'com_'.COMS] == 3){
+												$msg->error('Mật khẩu hiện tại không đúng.');
+												echo $msg->display();
 											}
-											unset($_SESSION['flash'.'com_'.$COM]);
+											unset($_SESSION['flash'.'com_'.COMS]);
 										}
 										?>
 									</p>
@@ -119,7 +117,7 @@ if(isset($_POST['cmdsave_tab2'])){
 									</div>
 
 									<div class="text-center toolbar">
-										<input type="button" name="cmdsave_tab2" id="cmdsave_tab2" onclick="return validate_data();" class="save btn btn-success" value="Lưu mật khẩu" class="btn btn-primary">
+										<input type="submit" name="cmdsave_tab2" id="cmdsave_tab2" onclick="return validate_data();" class="save btn btn-success" value="Lưu mật khẩu" class="btn btn-primary">
 									</div>
 								</form>
 							</div>
@@ -130,41 +128,3 @@ if(isset($_POST['cmdsave_tab2'])){
 		</section>
 	</div>
 </section>
-<script>
-	$(document).ready(function(){
-		$('.chk').click(function(){
-			var flag=true;
-			$('.chk').each(function(){
-				if(!$(this).is(':checked')){flag=false; return;}
-			});
-			if(flag) $('.chk_all').attr('checked',true);
-			else $('.chk_all').attr('checked',false);
-		});
-		$('.chk_all').click(function(){
-			var ischeck=$(this).is(':checked');
-			$('.chk').attr('checked',ischeck);
-		});
-		$('.chk_isadmin').click(function(){
-			var ischeck=$(this).is(':checked')?'yes':'no';
-			if(confirm('You are sure change permission this member?')){
-				var _url="<?php echo ROOTHOST;?>ajaxs/mem/change_isadmin.php";
-				var _data={
-					'user':$(this).val(),
-					'ischeck':ischeck
-				}
-				$.post(_url,_data,function(req){
-					/*alert('Change permission success!');*/
-					console.log(req);
-					window.location.reload();
-				})
-			}
-		});
-		$('#btn_add_member').click(function(){
-			var _url="<?php echo ROOTHOST;?>ajaxs/mem/frm_add.php";
-			$.get(_url,function(req){
-				$('#popup_modal .modal-body').html(req);
-				$('#popup_modal').modal('show')
-			});
-		});
-	});
-</script>
