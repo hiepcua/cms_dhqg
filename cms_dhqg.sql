@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2020-06-17 19:39:34
+Date: 2020-06-24 16:20:44
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -134,7 +134,7 @@ INSERT INTO `tbl_configsite` VALUES ('1', '0', '', 'ClassHub', '', 'Văn phòng 
 -- ----------------------------
 DROP TABLE IF EXISTS `tbl_member`;
 CREATE TABLE `tbl_member` (
-  `idi` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT '',
   `fullname` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT '',
@@ -147,13 +147,16 @@ CREATE TABLE `tbl_member` (
   `cdate` int(11) DEFAULT NULL,
   `is_trash` tinyint(4) DEFAULT 0,
   `isactive` tinyint(4) DEFAULT 1,
-  PRIMARY KEY (`idi`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of tbl_member
 -- ----------------------------
-INSERT INTO `tbl_member` VALUES ('1', 'tranviethiepdz@gmail.com', 'd93fc24a5f68f2d6621e2d3aff26b5600f38f1b6876ff04f0070b38a54b2d2f8|cdf4a007e2b02a0c49fc9b7ccfbb8a10c644f635e1765dcf2a7ab794ddc7edac', null, null, null, null, null, null, '0', null, '0', '1');
+INSERT INTO `tbl_member` VALUES ('1', 'tranviethiepdz@gmail.com', 'd93fc24a5f68f2d6621e2d3aff26b5600f38f1b6876ff04f0070b38a54b2d2f8|cdf4a007e2b02a0c49fc9b7ccfbb8a10c644f635e1765dcf2a7ab794ddc7edac', 'Trần Viết Hiệp', '0969549903', 'tranviethiepdz@gmail.com', '11', null, null, '0', '1591860947', '0', '1');
+INSERT INTO `tbl_member` VALUES ('2', 'hiepcua', '4c66b64b7cde991093b5105f94046d172b89f6985451c4142e4891309b16076a|5d60b270e920752f64a6acd4e36117485270acd02bc26829da8b7329e31d2e7e', 'Hiệp Cua', '0969541111', 'tranviethiep69@gmail.com', null, null, '', '0', '1591860947', '0', '1');
+INSERT INTO `tbl_member` VALUES ('8', 'hiep1', 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855|30fdf15fd513fd69085f9344ff2d5d716254aa367bcac88e78ee60ad0298d606', '', '', '', null, null, '', '0', '1592972166', '1', '0');
+INSERT INTO `tbl_member` VALUES ('9', 'abc', 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad|65829e542dd151f443cc997270c61e78c042a82d687cc13844bf2c1813714600', 'abcdef', '0969542222', 'abc@gmail.com', null, null, '', '0', '1592974493', '1', '0');
 
 -- ----------------------------
 -- Table structure for tbl_member_folder
@@ -256,7 +259,7 @@ CREATE TABLE `tbl_user_login` (
   `isactive` tinyint(4) DEFAULT 1,
   PRIMARY KEY (`id`),
   KEY `idx` (`isactive`,`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of tbl_user_login
@@ -280,7 +283,15 @@ INSERT INTO `tbl_user_login` VALUES ('16', 'tranviethiepdz@gmail.com', '15922733
 INSERT INTO `tbl_user_login` VALUES ('17', 'tranviethiepdz@gmail.com', '1592294102', '1592294102', '0');
 INSERT INTO `tbl_user_login` VALUES ('18', 'tranviethiepdz@gmail.com', '1592363890', '1592363890', '0');
 INSERT INTO `tbl_user_login` VALUES ('19', 'tranviethiepdz@gmail.com', '1592368001', '1592368001', '0');
-INSERT INTO `tbl_user_login` VALUES ('20', 'tranviethiepdz@gmail.com', '1592379908', '1592379908', '1');
+INSERT INTO `tbl_user_login` VALUES ('20', 'tranviethiepdz@gmail.com', '1592379908', '1592379908', '0');
+INSERT INTO `tbl_user_login` VALUES ('21', 'tranviethiepdz@gmail.com', '1592882495', '1592882495', '0');
+INSERT INTO `tbl_user_login` VALUES ('22', 'tranviethiepdz@gmail.com', '1592884874', '1592884874', '0');
+INSERT INTO `tbl_user_login` VALUES ('23', 'tranviethiepdz@gmail.com', '1592895338', '1592895338', '0');
+INSERT INTO `tbl_user_login` VALUES ('24', 'tranviethiepdz@gmail.com', '1592969767', '1592969767', '0');
+INSERT INTO `tbl_user_login` VALUES ('25', 'tranviethiepdz@gmail.com', '1592972146', '1592972146', '0');
+INSERT INTO `tbl_user_login` VALUES ('26', 'tranviethiepdz@gmail.com', '1592972615', '1592972615', '0');
+INSERT INTO `tbl_user_login` VALUES ('27', 'tranviethiepdz@gmail.com', '1592974518', '1592974518', '0');
+INSERT INTO `tbl_user_login` VALUES ('28', 'tranviethiepdz@gmail.com', '1592985453', '1592985453', '1');
 
 -- ----------------------------
 -- Table structure for tbl_vods
