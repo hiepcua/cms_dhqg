@@ -24,7 +24,7 @@ if(isset($_POST['txt_name']) && $_POST['txt_name'] !== '') {
 	}
 
 	if(isset($_FILES['txt_thumb']) && $_FILES['txt_thumb']['size'] > 0){
-		$save_path 	= "medias/vods/videos/";
+		$save_path 	= "medias/contents/";
 		$obj_upload->setPath($save_path);
 		$file = $save_path.$obj_upload->UploadFile("txt_thumb", $save_path);
 	}
@@ -80,7 +80,7 @@ $__action = $_per_tbt;
 			<div class="col-sm-6">
 				<ol class="breadcrumb float-sm-right">
 					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>">Bảng điều khiển</a></li>
-					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST;?>vod">Danh sách bài viết</a></li>
+					<li class="breadcrumb-item"><a href="<?php echo ROOTHOST.COMS;?>">Danh sách bài viết</a></li>
 					<li class="breadcrumb-item active">Thêm mới bài viết</li>
 				</ol>
 			</div><!-- /.col -->
@@ -119,7 +119,7 @@ $__action = $_per_tbt;
 							</div><hr>
 							<div  class="form-group">
 								<label>Tiêu đề<font color="red"><font color="red">*</font></font></label>
-								<input type="text" id="txt_name" name="txt_name" class="form-control" value="" placeholder="Tiêu đề VOD">
+								<input type="text" id="txt_name" name="txt_name" class="form-control" value="" placeholder="Tiêu đề bài viết">
 							</div>
 
 							<div class='form-group'>
